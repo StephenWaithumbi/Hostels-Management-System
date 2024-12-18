@@ -1,5 +1,5 @@
 import sys
-from models import Hostel, Student
+from models import Hostel, Student, Base
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -12,4 +12,6 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 def init_db():
-    pass
+    #iniializes the db
+    Base.metadata.create_all(engine)
+    print("Hostel Database initialized...")

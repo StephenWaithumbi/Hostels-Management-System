@@ -103,3 +103,42 @@ def view_student_by_hostel():
       for student in students:
           print(student)
 
+def menu():
+    while True:
+        print("\nWelcome >>>>")
+        print("1. Create Hostel")
+        print("2. Update Hostel")
+        print("3. Register Student")
+        print("4. Update Student")
+        print("5. Delete Student")
+        print("6. View Hostels")
+        print("7. View all students")
+        print("8. View students from specific Hostel")
+        print("9. Exit")
+        user_input = input("Enter Your choice >> ")
+
+        if user_input == '1':
+            create_hostel()
+        elif user_input == '2':
+            update_hostel()
+        elif user_input == '3':
+            create_student()
+        elif user_input == '4':
+            update_student()
+        elif user_input == '5':
+            delete_student()
+        elif user_input == '6':
+            list_hostels()
+        elif user_input == '7':
+            list_students()
+        elif user_input == '8':
+            view_student_by_hostel()
+        elif user_input == '9':
+            print("Thanks for using the application")
+            sys.exit()
+
+if __name__ == '__main__':
+    init_db()
+    menu()
+        
+                      

@@ -65,3 +65,16 @@ def update_student():
     session.commit()
     print(f"Student with id {student_id} was updated successfully!")
 
+def delete_student():
+    student_id = int(input("Enter the id for student to be deleted: >> "))
+    student = session.get(Student, student_id)
+    if not student:
+        print(f"Could not find student with id {student_id}")
+        return
+    session.delete(student)
+    session.commit()
+    print(f"Student with Id of {student_id} was deleted successfully")
+
+
+    
+    

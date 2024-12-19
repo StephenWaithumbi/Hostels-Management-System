@@ -1,9 +1,9 @@
-import sys
+import sys, os
 from models import Hostel, Student, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from colorama import Fore, Style, init
-import os
+from colorama import Fore, init
+
 
 init(autoreset=True)
 
@@ -12,7 +12,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 def clear_screen():
-    os.system("cls" if os.name == "nt" else "clear")
+    os.system("clear")
 
 def print_border(char='-', length=50):
     print(Fore.CYAN + char * length)
@@ -151,9 +151,9 @@ def menu():
     clear_screen()
     while True:
         print_border('=')
-        print_centered("Hostel Management System")
+        print_centered("Welcome to my app 😊")
         print_border('=')
-        print(Fore.YELLOW + "\n1. Create Hostel")
+        print("\n1. Create Hostel")
         print("2. Update Hostel")
         print("3. Register Student")
         print("4. Update Student")

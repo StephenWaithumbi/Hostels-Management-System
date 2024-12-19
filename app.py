@@ -75,6 +75,12 @@ def delete_student():
     session.commit()
     print(f"Student with Id of {student_id} was deleted successfully")
 
+def list_hostels():
+    hostels = session.query(Hostel).all()
+    if not hostels:
+        print("Not hostels found")
+        for hostel in hostels:
+            print(hostel)
 
-    
+
     

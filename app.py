@@ -16,36 +16,42 @@ def init_db():
 
 def create_hostel():
     #create a new hostel in the data base
-    name = input("Enter hostel name: >> ")
+    name = input("\nEnter hostel name: >> ")
     capacity = int(input("Enter the number rooms >> "))
     hostel = Hostel(name=name, capacity=capacity)
     session.add(hostel)
     session.commit()
-    print(f"Hostel '{name}' created successfully")
+    print(f"Hostel '{name}' created was successfully")
 
 def update_hostel():
     hostel_id = int(input("Enter the hostel's ID to update: >> "))
     hostel = session.get(Hostel, hostel_id)
     if not hostel:
-        print("Could not find a hostel the id of {hostel_id}")
+        print(f"Could not find a hostel the id of {hostel_id}")
         return
-    hostel.name = input("Enter the new name for hostel '{hostel.name}': >> " or hostel.name)
-    hostel.capacity = int(input("Update the number of rooms for hostel '{hostel.name}' >> " or hostel.capacity))
+    hostel.name = input(f"Enter the new name for hostel '{hostel.name}': >> " )
+    capacity = input("Update the number of students for '{hostel.name}' Currently: '{hostel.capacity}' >> ")  or hostel.capacity
+    hostel.capacity = int(capacity) if capacity else hostel.capacity
     session.commit()
     print("Hostel Updated successfully.")
 
 def create_student():
     name = input("Enter Student's name: >> ")
-    reg_no = int(input("Enter students reg no: >> "))
-    hostel_id = int(input("Enter Student's hostel: >> "))
-    hostel = session.get(Hostel, hostel_id)
-    if not hostel:
-        print(f"Sorry hostel with Id {hostel.id} doesnot exist")
-        return
+    reg_no = int(input("Enter student's registration number: >> "))
+    
+    while True:
+        hostel_id = int(input("Enter Student's hostel ID: >> "))
+        hostel = session.get(Hostel, hostel_id)
+        if hostel:
+            break
+        print(f"Sorry, hostel with ID {hostel_id} does not exist. Please try again.")
+
     student = Student(name=name, reg_no=reg_no, hostel_id=hostel_id)
     session.add(student)
     session.commit()
-    print(f"Student '{name}' was created successfully!!'")
+    print(f"Student '{name}' was created successfully!")
+
+    
 
 def update_student():
     student_id = int(input("Enter students id to update: >> "))
@@ -71,16 +77,20 @@ def delete_student():
     if not student:
         print(f"Could not find student with id {student_id}")
         return
+    confirm = input(f"Are you sure you want to delete student '{student.name}'? (y/n): ")
+    if confirm != 'y':
+        print("Operation cancelled.")
+        return
     session.delete(student)
     session.commit()
-    print(f"Student with Id of {student_id} was deleted successfully")
+    print(f"Student with Id of {student_id} was deleted successfully")    
 
 def list_hostels():
     hostels = session.query(Hostel).all()
     if not hostels:
         print("Not hostels found")
-        for hostel in hostels:
-            print(hostel)
+    for hostel in hostels:
+        print(hostel)
 
 def list_students():
     students = session.query(Student).all()
@@ -90,7 +100,7 @@ def list_students():
         print(student)
     
 def view_student_by_hostel():
-      hostel_id = int(input("Enter Hostel id"))
+      hostel_id = int(input("Enter Hostel id: >> "))
       hostel = session.get(Hostel, hostel_id)
       if not hostel:
           print(f"Hostel with id '{hostel_id}' was not found")
@@ -104,17 +114,18 @@ def view_student_by_hostel():
           print(student)
 
 def menu():
-    while True:
-        print("\nWelcome >>>>")
-        print("1. Create Hostel")
-        print("2. Update Hostel")
-        print("3. Register Student")
-        print("4. Update Student")
-        print("5. Delete Student")
-        print("6. View Hostels")
-        print("7. View all students")
-        print("8. View students from specific Hostel")
-        print("9. Exit")
+    print("\nWelcome >>>>")
+    print("1. Create Hostel")
+    print("2. Update Hostel")
+    print("3. Register Student")
+    print("4. Update Student")
+    print("5. Delete Student")
+    print("6. View Hostels")
+    print("7. View all students")
+    print("8. View students from specific Hostel")
+    print("9. Exit")
+
+    while True:        
         user_input = input("Enter Your choice >> ")
 
         if user_input == '1':
@@ -136,6 +147,8 @@ def menu():
         elif user_input == '9':
             print("Thanks for using the application")
             sys.exit()
+        else:
+            print("Ivalid Choice. Please select a valid choice")
 
 if __name__ == '__main__':
     init_db()

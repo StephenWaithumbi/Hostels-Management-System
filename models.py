@@ -13,7 +13,7 @@ class Hostel(Base):
     students = relationship("Student", back_populates='hostel')
 
     def __repr__(self):
-        return f"Hostel >> {self.id} Name >> {self.name} No of rooms >> {self.capacity}"
+        return f"Name: '{self.name}' Capacity: '{self.capacity}' rooms"
 
 class Student(Base):
     __tablename__ = 'students'
@@ -27,4 +27,4 @@ class Student(Base):
 
 
     def __repr__(self):
-        return f"Student's name: '{self.name} Reg_No: {self.reg_no}' Hostel: {self.hostel}"
+        return f"Student's name: '{self.name}' Reg_No: '{self.reg_no}'"

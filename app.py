@@ -1,141 +1,169 @@
 import sys
 from models import Hostel, Student, Base
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from colorama import Fore, Style, init
+import os
+
+init(autoreset=True)
 
 engine = create_engine('sqlite:///hostel_database.db')
-
 Session = sessionmaker(bind=engine)
 session = Session()
 
-def init_db():    
-    Base.metadata.create_all(engine)
-    print("Hostel Database initialized...")
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
 
-def create_hostel():    
-    name = input("\nEnter hostel name: >> ")
-    capacity = int(input("Enter the number rooms >> "))
+def print_border(char='-', length=50):
+    print(Fore.CYAN + char * length)
+
+def print_centered(text, width=50):
+    print(Fore.GREEN + text.center(width))
+
+def init_db():
+    Base.metadata.create_all(engine)
+    print(Fore.YELLOW + "Hostel Database initialized...")
+
+def create_hostel():
+    clear_screen()
+    print_centered("Create Hostel")
+    print_border()
+    name = input(Fore.CYAN + "\nEnter hostel name: >> ")
+    capacity = int(input("Enter the number of rooms: >> "))
     hostel = Hostel(name=name, capacity=capacity)
     session.add(hostel)
     session.commit()
-    print(f"Hostel '{name}' created was successfully")
+    print(Fore.GREEN + f"Hostel '{name}' created successfully")
 
 def update_hostel():
-    while True:
-        hostel_id = int(input("Enter the hostel's ID to update: >> "))
+    clear_screen()
+    print_centered("Update Hostel")
+    print_border()
+    hostel_id = int(input("Enter the hostel's ID to update: >> "))
+    hostel = session.get(Hostel, hostel_id)
+    while not hostel:
+        print(Fore.RED + f"Could not find a hostel with ID {hostel_id}")
+        hostel_id = int(input("Enter a valid hostel ID: >> "))
         hostel = session.get(Hostel, hostel_id)
-        if hostel:
-            break
-        print(f"Hostel with ID {hostel_id} does not exist. Please try again.")
-
-    hostel.name = input(f"Enter the new name for hostel '{hostel.name}' (press Enter to keep current): >> ") or hostel.name
-    capacity = input(f"Enter the updated capacity for '{hostel.name}' (current: {hostel.capacity}, press Enter to keep current): >> ")
+    print(Fore.YELLOW + f"Current Name: {hostel.name}, Capacity: {hostel.capacity}")
+    hostel.name = input(f"Enter new name for '{hostel.name}' (Leave blank to keep current): >> ") or hostel.name
+    capacity = input(f"Update capacity for '{hostel.name}' (Leave blank to keep {hostel.capacity}): >> ")
     hostel.capacity = int(capacity) if capacity else hostel.capacity
-
     session.commit()
-    print(f"Hostel with ID {hostel_id} was updated successfully!")
-
+    print(Fore.GREEN + f"Hostel '{hostel.name}' updated successfully.")
 
 def create_student():
-    name = input("Enter Student's name: >> ")
-    reg_no = int(input("Enter student's registration number: >> "))
-    
-    while True:
-        hostel_id = int(input("Enter Student's hostel ID: >> "))
+    clear_screen()
+    print_centered("Register Student")
+    print_border()
+    name = input("Enter student's name: >> ")
+    reg_no = int(input("Enter student's reg no: >> "))
+    hostel_id = int(input("Enter student's hostel ID: >> "))
+    hostel = session.get(Hostel, hostel_id)
+    while not hostel:
+        print(Fore.RED + f"Hostel with ID {hostel_id} does not exist.")
+        hostel_id = int(input("Enter a valid hostel ID: >> "))
         hostel = session.get(Hostel, hostel_id)
-        if hostel:
-            break
-        print(f"Sorry, hostel with ID {hostel_id} does not exist. Please try again.")
-
     student = Student(name=name, reg_no=reg_no, hostel_id=hostel_id)
     session.add(student)
     session.commit()
-    print(f"Student '{name}' was created successfully!")    
+    print(Fore.GREEN + f"Student '{name}' registered successfully.")
 
 def update_student():
-    while True:
-        student_id = int(input("Enter the student's ID to update: >> "))
+    clear_screen()
+    print_centered("Update Student")
+    print_border()
+    student_id = int(input("Enter student's ID to update: >> "))
+    student = session.get(Student, student_id)
+    while not student:
+        print(Fore.RED + f"Student with ID {student_id} does not exist.")
+        student_id = int(input("Enter a valid student ID: >> "))
         student = session.get(Student, student_id)
-        if student:
-            break
-        print(f"The student with ID {student_id} does not exist. Please try again.")
-
-    student.name = input(f"Enter new name for '{student.name}' (press Enter to keep current): >> ") or student.name
-    reg_no = input(f"Enter new registration number for '{student.reg_no}' (press Enter to keep current): >> ")
-    student.reg_no = int(reg_no) if reg_no else student.reg_no
-
-    while True:
-        new_hostel_id = input(f"Enter student's new hostel ID (press Enter to keep current: {student.hostel_id}): >> ")
-        if not new_hostel_id: 
-            break
-        new_hostel_id = int(new_hostel_id)
-        new_hostel = session.get(Hostel, new_hostel_id)
-        if new_hostel:
-            student.hostel_id = new_hostel_id
-            break
-        print(f"Hostel with ID {new_hostel_id} does not exist. Please try again.")
-
+    print(Fore.YELLOW + f"Current Name: {student.name}, Reg No: {student.reg_no}, Hostel ID: {student.hostel_id}")
+    student.name = input("Enter new name (Leave blank to keep current): >> ") or student.name
+    student.reg_no = int(input("Enter new reg no (Leave blank to keep current): >> ") or student.reg_no)
+    new_hostel_id = int(input("Enter new hostel ID (Leave blank to keep current): >> ") or student.hostel_id)
+    new_hostel = session.get(Hostel, new_hostel_id) if new_hostel_id else None
+    if new_hostel_id and not new_hostel:
+        print(Fore.RED + f"Hostel with ID {new_hostel_id} does not exist. Keeping current hostel.")
+    else:
+        student.hostel_id = new_hostel_id
     session.commit()
-    print(f"Student with ID {student_id} was updated successfully!")
-
+    print(Fore.GREEN + f"Student '{student.name}' updated successfully.")
 
 def delete_student():
-    student_id = int(input("Enter the id for student to be deleted: >> "))
+    clear_screen()
+    print_centered("Delete Student")
+    print_border()
+    student_id = int(input("Enter the ID of the student to delete: >> "))
     student = session.get(Student, student_id)
     if not student:
-        print(f"Could not find student with id {student_id}")
+        print(Fore.RED + f"No student found with ID {student_id}")
         return
-    confirm = input(f"Are you sure you want to delete student '{student.name}'? (y/n): ")
-    if confirm != 'y':
-        print("Operation cancelled.")
+    confirm = input(Fore.YELLOW + f"Are you sure you want to delete '{student.name}'? (y/n): >> ")
+    if confirm.lower() != 'y':
+        print(Fore.RED + "Operation cancelled.")
         return
     session.delete(student)
     session.commit()
-    print(f"Student with Id of {student_id} was deleted successfully")    
+    print(Fore.GREEN + f"Student '{student.name}' deleted successfully.")
 
 def list_hostels():
+    clear_screen()
+    print_centered("Hostel List")
+    print_border()
     hostels = session.query(Hostel).all()
     if not hostels:
-        print("Not hostels found")
+        print(Fore.RED + "No hostels found.")
+        return
     for hostel in hostels:
-        print(hostel)
+        print(Fore.CYAN + f"ID: {hostel.id}, Name: {hostel.name}, Capacity: {hostel.capacity}")
 
 def list_students():
+    clear_screen()
+    print_centered("Student List")
+    print_border()
     students = session.query(Student).all()
     if not students:
-        print("No students found! ")
+        print(Fore.RED + "No students found.")
+        return
     for student in students:
-        print(student)
-    
+        print(Fore.CYAN + f"ID: {student.id}, Name: {student.name}, Reg No: {student.reg_no}, Hostel ID: {student.hostel_id}")
+
 def view_student_by_hostel():
-      hostel_id = int(input("Enter Hostel id: >> "))
-      hostel = session.get(Hostel, hostel_id)
-      if not hostel:
-          print(f"Hostel with id '{hostel_id}' was not found")
-          return
-      students = hostel.students
-      if not students:
-          print(f"No student found with!")
-          return
-      print(f"Students in {hostel.name} hostel are...")
-      for student in students:
-          print(student)
+    clear_screen()
+    print_centered("View Students by Hostel")
+    print_border()
+    hostel_id = int(input("Enter hostel ID: >> "))
+    hostel = session.get(Hostel, hostel_id)
+    if not hostel:
+        print(Fore.RED + f"No hostel found with ID {hostel_id}.")
+        return
+    students = hostel.students
+    if not students:
+        print(Fore.YELLOW + f"No students found in hostel '{hostel.name}'.")
+        return
+    print(Fore.GREEN + f"Students in hostel '{hostel.name}':")
+    for student in students:
+        print(Fore.CYAN + f"ID: {student.id}, Name: {student.name}, Reg No: {student.reg_no}")
 
 def menu():
-    print("\nWelcome to my App 😊\n")
-    print("1. Create Hostel")
-    print("2. Update Hostel")
-    print("3. Register Student")
-    print("4. Update Student")
-    print("5. Delete Student")
-    print("6. View Hostels")
-    print("7. View all students")
-    print("8. View students from specific Hostel")
-    print("9. Exit")
-
-    while True:        
-        user_input = input("Enter Your choice >> ")
+    clear_screen()
+    while True:
+        print_border('=')
+        print_centered("Hostel Management System")
+        print_border('=')
+        print(Fore.YELLOW + "\n1. Create Hostel")
+        print("2. Update Hostel")
+        print("3. Register Student")
+        print("4. Update Student")
+        print("5. Delete Student")
+        print("6. View Hostels")
+        print("7. View All Students")
+        print("8. View Students by Hostel")
+        print("9. Exit")
+        print_border('=')
+        user_input = input(Fore.CYAN + "Enter your choice: >> ")
 
         if user_input == '1':
             create_hostel()
@@ -154,13 +182,9 @@ def menu():
         elif user_input == '8':
             view_student_by_hostel()
         elif user_input == '9':
-            print("Thanks for using the application")
+            print(Fore.GREEN + "Thanks for using the application.")
             sys.exit()
-        else:
-            print("Ivalid Choice. Please select a valid choice")
 
 if __name__ == '__main__':
     init_db()
     menu()
-        
-                      

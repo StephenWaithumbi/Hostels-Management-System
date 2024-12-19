@@ -23,3 +23,14 @@ def create_hostel():
     session.commit()
     print(f"Hostel '{name}' created successfully")
 
+def update_hostel():
+    hostel_id = int(input("Enter the hostel's ID to update: >> "))
+    hostel = session.get(Hostel, hostel_id)
+    if not hostel:
+        print("Could not find a hostel the id of {hostel_id}")
+        return
+    hostel.name = input("Enter the new name for hostel '{hostel.name}': >> " or hostel.name)
+    hostel.capacity = int(input("Update the number of rooms for hostel '{hostel.name}' >> " or hostel.capacity))
+    session.commit()
+    print("Hostel Updated successfully.")
+

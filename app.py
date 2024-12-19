@@ -89,4 +89,17 @@ def list_students():
     for student in students:
         print(student)
     
-    
+def view_student_by_hostel():
+      hostel_id = int(input("Enter Hostel id"))
+      hostel = session.get(Hostel, hostel_id)
+      if not hostel:
+          print(f"Hostel with id '{hostel_id}' was not found")
+          return
+      students = hostel.students
+      if not students:
+          print(f"No student found with!")
+          return
+      print(f"Students in {hostel.name} hostel are...")
+      for student in students:
+          print(student)
+

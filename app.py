@@ -49,27 +49,34 @@ def create_student():
     student = Student(name=name, reg_no=reg_no, hostel_id=hostel_id)
     session.add(student)
     session.commit()
-    print(f"Student '{name}' was created successfully!")
-
-    
+    print(f"Student '{name}' was created successfully!")    
 
 def update_student():
-    student_id = int(input("Enter students id to update: >> "))
-    student = session.get(Student, student_id)
-    if not student:
-        print(f"The Student with id {student_id} does not exist")
-        return
-    student.name = input("Enter new name: >> ") or student.name
-    student.reg_no = int(input("Enter new reg no: >> ")) or student.reg_no
-    new_hostel_id = int(input("Enter student's new hostel: >> ")) or student.hostel_id
-    if new_hostel_id:
+    while True:
+        student_id = int(input("Enter the student's ID to update: >> "))
+        student = session.get(Student, student_id)
+        if student:
+            break
+        print(f"The student with ID {student_id} does not exist. Please try again.")
+
+    student.name = input(f"Enter new name for '{student.name}' (press Enter to keep current): >> ") or student.name
+    reg_no = inp~ut(f"Enter new registration number for '{student.reg_no}' (press Enter to keep current): >> ")
+    student.reg_no = int(reg_no) if reg_no else student.reg_no
+
+    while True:
+        new_hostel_id = input(f"Enter student's new hostel ID (press Enter to keep current: {student.hostel_id}): >> ")
+        if not new_hostel_id: 
+            break
+        new_hostel_id = int(new_hostel_id)
         new_hostel = session.get(Hostel, new_hostel_id)
-        if not new_hostel:
-            print(f"Hostel with id '{new_hostel_id}' does not exist!")            
-        else:
+        if new_hostel:
             student.hostel_id = new_hostel_id
+            break
+        print(f"Hostel with ID {new_hostel_id} does not exist. Please try again.")
+
     session.commit()
-    print(f"Student with id {student_id} was updated successfully!")
+    print(f"Student with ID {student_id} was updated successfully!")
+
 
 def delete_student():
     student_id = int(input("Enter the id for student to be deleted: >> "))

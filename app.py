@@ -34,3 +34,16 @@ def update_hostel():
     session.commit()
     print("Hostel Updated successfully.")
 
+def create_student():
+    name = input("Enter Student's name: >> ")
+    reg_no = int(input("Enter students reg no: >> "))
+    hostel_id = int(input("Enter Student's hostel: >> "))
+    hostel = session.get(Hostel, hostel_id)
+    if not hostel:
+        print(f"Sorry hostel with Id {hostel.id} doesnot exist")
+        return
+    student = Student(name=name, reg_no=reg_no, hostel_id=hostel_id)
+    session.add(student)
+    session.commit()
+    print(f"Student '{name}' was created successfully!!'")
+

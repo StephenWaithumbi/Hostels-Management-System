@@ -82,5 +82,11 @@ def list_hostels():
         for hostel in hostels:
             print(hostel)
 
-
+def list_students():
+    students = session.query(Student).all()
+    if not students:
+        print("No students found! ")
+    for student in students:
+        print(student)
+    
     

@@ -9,13 +9,11 @@ engine = create_engine('sqlite:///hostel_database.db')
 Session = sessionmaker(bind=engine)
 session = Session()
 
-def init_db():
-    #iniializes the db
+def init_db():    
     Base.metadata.create_all(engine)
     print("Hostel Database initialized...")
 
-def create_hostel():
-    #create a new hostel in the data base
+def create_hostel():    
     name = input("\nEnter hostel name: >> ")
     capacity = int(input("Enter the number rooms >> "))
     hostel = Hostel(name=name, capacity=capacity)
@@ -24,16 +22,20 @@ def create_hostel():
     print(f"Hostel '{name}' created was successfully")
 
 def update_hostel():
-    hostel_id = int(input("Enter the hostel's ID to update: >> "))
-    hostel = session.get(Hostel, hostel_id)
-    if not hostel:
-        print(f"Could not find a hostel the id of {hostel_id}")
-        return
-    hostel.name = input(f"Enter the new name for hostel '{hostel.name}': >> " )
-    capacity = input("Update the number of students for '{hostel.name}' Currently: '{hostel.capacity}' >> ")  or hostel.capacity
+    while True:
+        hostel_id = int(input("Enter the hostel's ID to update: >> "))
+        hostel = session.get(Hostel, hostel_id)
+        if hostel:
+            break
+        print(f"Hostel with ID {hostel_id} does not exist. Please try again.")
+
+    hostel.name = input(f"Enter the new name for hostel '{hostel.name}' (press Enter to keep current): >> ") or hostel.name
+    capacity = input(f"Enter the updated capacity for '{hostel.name}' (current: {hostel.capacity}, press Enter to keep current): >> ")
     hostel.capacity = int(capacity) if capacity else hostel.capacity
+
     session.commit()
-    print("Hostel Updated successfully.")
+    print(f"Hostel with ID {hostel_id} was updated successfully!")
+
 
 def create_student():
     name = input("Enter Student's name: >> ")
@@ -60,7 +62,7 @@ def update_student():
         print(f"The student with ID {student_id} does not exist. Please try again.")
 
     student.name = input(f"Enter new name for '{student.name}' (press Enter to keep current): >> ") or student.name
-    reg_no = inp~ut(f"Enter new registration number for '{student.reg_no}' (press Enter to keep current): >> ")
+    reg_no = input(f"Enter new registration number for '{student.reg_no}' (press Enter to keep current): >> ")
     student.reg_no = int(reg_no) if reg_no else student.reg_no
 
     while True:
@@ -121,7 +123,7 @@ def view_student_by_hostel():
           print(student)
 
 def menu():
-    print("\nWelcome >>>>")
+    print("\nWelcome to my App 😊\n")
     print("1. Create Hostel")
     print("2. Update Hostel")
     print("3. Register Student")

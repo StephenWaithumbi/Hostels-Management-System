@@ -47,3 +47,21 @@ def create_student():
     session.commit()
     print(f"Student '{name}' was created successfully!!'")
 
+def update_student():
+    student_id = int(input("Enter students id to update: >> "))
+    student = session.get(Student, student_id)
+    if not student:
+        print(f"The Student with id {student_id} does not exist")
+        return
+    student.name = input("Enter new name: >> ") or student.name
+    student.reg_no = int(input("Enter new reg no: >> ")) or student.reg_no
+    new_hostel_id = int(input("Enter student's new hostel: >> ")) or student.hostel_id
+    if new_hostel_id:
+        new_hostel = session.get(Hostel, new_hostel_id)
+        if not new_hostel:
+            print(f"Hostel with id '{new_hostel_id}' does not exist!")            
+        else:
+            student.hostel_id = new_hostel_id
+    session.commit()
+    print(f"Student with id {student_id} was updated successfully!")
+
